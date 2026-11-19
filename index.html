@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Ürün, stok ve satış takibi için örnek stok yönetim paneli.">
+  <title>StokPilot | Stok Yönetim Paneli</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#" aria-label="StokPilot ana sayfa"><span class="brand-mark">S</span><span>stok<span class="brand-light">pilot</span></span></a>
+      <div class="workspace-label">ÇALIŞMA ALANI</div>
+      <nav class="side-nav" aria-label="Ana menü">
+        <a class="nav-item active" href="#overview"><span class="nav-icon">▦</span> Genel Bakış</a>
+        <a class="nav-item" href="#inventory"><span class="nav-icon">▤</span> Ürün & Stoklar</a>
+        <a class="nav-item" href="#sales"><span class="nav-icon">↗</span> Satış Özeti</a>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="demo-note"><span class="demo-pulse"></span><div><strong>Demo ortamı</strong><small>Örnek veriler kullanılıyor</small></div></div>
+        <a class="back-link" href="../../index.html">← Portfolyoya dön</a>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <button class="mobile-menu" id="mobile-menu" aria-label="Menüyü aç">☰</button>
+        <div><p class="breadcrumb">Çalışma alanı <span>/</span> Genel Bakış</p><h1>Stok Yönetimi</h1></div>
+        <div class="topbar-actions"><span class="today-label" id="today-label"></span><span class="avatar" title="Demo kullanıcı">GT</span></div>
+      </header>
+
+      <section class="page-content" id="overview">
+        <div class="welcome-row">
+          <div><p class="eyebrow">İŞLETME ÖZETİ</p><h2>Merhaba, Gökay <span>✦</span></h2><p class="muted">İşletmenin stok ve satış performansına genel bakış.</p></div>
+          <button class="button button-primary" id="add-product-top"><span>＋</span> Yeni ürün ekle</button>
+        </div>
+
+        <div class="metrics-grid" aria-label="Özet göstergeler">
+          <article class="metric-card"><div class="metric-top"><span>Toplam ürün</span><span class="metric-icon violet">▤</span></div><strong id="metric-products">0</strong><small>Envanterde kayıtlı ürün</small></article>
+          <article class="metric-card"><div class="metric-top"><span>Stokta bulunan</span><span class="metric-icon teal">◉</span></div><strong id="metric-units">0</strong><small>Toplam ürün adedi</small></article>
+          <article class="metric-card"><div class="metric-top"><span>Stok değeri</span><span class="metric-icon amber">₺</span></div><strong id="metric-value">₺0</strong><small>Maliyet üzerinden yaklaşık değer</small></article>
+          <article class="metric-card"><div class="metric-top"><span>Kritik stok</span><span class="metric-icon rose">!</span></div><strong id="metric-low">0</strong><small>Minimum seviyede veya altında</small></article>
+        </div>
+
+        <div class="content-grid">
+          <section class="panel inventory-panel" id="inventory">
+            <div class="panel-heading"><div><h3>Ürün envanteri</h3><p>Ürünlerini görüntüle ve yönet.</p></div><button class="button button-outline" id="export-csv">↓ CSV dışa aktar</button></div>
+            <div class="toolbar"><label class="search-box"><span>⌕</span><input id="search-input" type="search" placeholder="Ürün veya SKU ara..." aria-label="Ürün ara"></label><select id="category-filter" aria-label="Kategori filtrele"><option value="all">Tüm kategoriler</option><option value="Elektronik">Elektronik</option><option value="Ofis">Ofis</option><option value="Gıda">Gıda</option><option value="Diğer">Diğer</option></select><select id="stock-filter" aria-label="Stok durumuna göre filtrele"><option value="all">Tüm stoklar</option><option value="low">Kritik stok</option><option value="healthy">Yeterli stok</option></select></div>
+            <div class="table-wrap"><table><thead><tr><th>ÜRÜN</th><th>KATEGORİ</th><th>SKU</th><th>BİRİM FİYAT</th><th>STOK</th><th>DURUM</th><th></th></tr></thead><tbody id="product-table"></tbody></table><div class="empty-state" id="empty-state" hidden><span>⌕</span><strong>Ürün bulunamadı</strong><p>Arama veya filtrelerini değiştirmeyi dene.</p></div></div>
+            <div class="table-footer"><span id="result-count">0 ürün gösteriliyor</span><span>Demo verileri tarayıcında saklanır.</span></div>
+          </section>
+
+          <aside class="right-column">
+            <section class="panel alerts-panel"><div class="panel-heading"><div><h3>Stok uyarıları</h3><p>Takip edilmesi gereken ürünler.</p></div><span class="alert-count" id="alert-count">0</span></div><div id="alerts-list" class="alerts-list"></div></section>
+            <section class="panel category-panel" id="sales"><div class="panel-heading"><div><h3>Kategori dağılımı</h3><p>Ürün adedine göre.</p></div></div><div id="category-chart" class="category-chart"></div></section>
+          </aside>
+        </div>
+        <footer class="page-footer"><span>StokPilot · Portfolyo projesi</span><span>HTML · CSS · JavaScript · LocalStorage</span></footer>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="product-dialog" class="product-dialog">
+    <form id="product-form">
+      <div class="dialog-heading"><div><p class="eyebrow">ENVANTER YÖNETİMİ</p><h2 id="dialog-title">Yeni ürün ekle</h2></div><button type="button" class="icon-button" id="close-dialog" aria-label="Pencereyi kapat">×</button></div>
+      <input type="hidden" id="product-id">
+      <div class="form-grid">
+        <label class="field full">Ürün adı<input id="product-name" required maxlength="60" placeholder="Örn. Kablosuz mouse"></label>
+        <label class="field">SKU / Ürün kodu<input id="product-sku" required maxlength="24" placeholder="MSE-001"></label>
+        <label class="field">Kategori<select id="product-category"><option>Elektronik</option><option>Ofis</option><option>Gıda</option><option>Diğer</option></select></label>
+        <label class="field">Birim maliyet (₺)<input id="product-price" type="number" required min="0" step="0.01" placeholder="0.00"></label>
+        <label class="field">Stok adedi<input id="product-quantity" type="number" required min="0" step="1" placeholder="0"></label>
+        <label class="field full">Minimum stok seviyesi<input id="product-minimum" type="number" required min="0" step="1" value="5"></label>
+      </div>
+      <p class="form-error" id="form-error" role="alert"></p>
+      <div class="dialog-actions"><button type="button" class="button button-outline" id="cancel-dialog">Vazgeç</button><button type="submit" class="button button-primary">Kaydet</button></div>
+    </form>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
