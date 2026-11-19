@@ -124,11 +124,11 @@ $("#export-csv").addEventListener("click",()=>{
   // Prevent spreadsheet formula execution from untrusted text fields.
   const safeCell = value => {
     let text = String(value);
-    if (/^[\\u0000-\\u0020]*[=+\\-@]/.test(text)) text = "'" + text;
+    if (/^[\u0000-\u0020]*[=+\-@]/.test(text)) text = "'" + text;
     return '"' + text.replace(/"/g,'""') + '"';
   };
-  const csv=[headers,...rows].map(row=>row.map(safeCell).join(";")).join("\\r\\n");
-  const blob=new Blob(["\\uFEFF"+csv],{type:"text/csv;charset=utf-8;"});
+  const csv=[headers,...rows].map(row=>row.map(safeCell).join(";")).join("\r\n");
+  const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8;"});
   const url=URL.createObjectURL(blob),link=document.createElement("a");
   link.href=url;link.download="stokpilot-urunler.csv";document.body.appendChild(link);link.click();link.remove();
   setTimeout(()=>URL.revokeObjectURL(url),0);
