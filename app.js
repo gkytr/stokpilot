@@ -17,7 +17,15 @@ function loadProducts(){
     return stored ? JSON.parse(stored) : initialProducts.map(item=>({...item}));
   } catch { return initialProducts.map(item=>({...item})); }
 }
-function saveProducts(){ localStorage.setItem(STORAGE_KEY,JSON.stringify(products)); }
+function saveProducts(){
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
+    return true;
+  } catch {
+    showToast("Tarayıcı depolamasına kaydedilemedi. Depolama alanını kontrol et.");
+    return false;
+  }
+}
 function money(value){ return new Intl.NumberFormat("tr-TR",{style:"currency",currency:"TRY",maximumFractionDigits:2}).format(value); }
 function escapeHTML(value){ return String(value).replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char])); }
 function isLow(item){ return item.quantity <= item.minimum; }
@@ -113,9 +121,17 @@ $("#product-table").addEventListener("click",event=>{
 $("#export-csv").addEventListener("click",()=>{
   const headers=["Ürün adı","SKU","Kategori","Birim maliyet","Stok adedi","Minimum stok"];
   const rows=products.map(item=>[item.name,item.sku,item.category,item.price,item.quantity,item.minimum]);
-  const csv=[headers,...rows].map(row=>row.map(value=>'"'+String(value).replace(/"/g,'""')+'"').join(";")).join("\r\n");
+  // Prevent spreadsheet formula execution from untrusted text fields.
+  const safeCell = value => {
+    let text = String(value);
+    if (/^[\u0000-\u0020]*[=+\-@]/.test(text)) text = "'" + text;
+    return '"' + text.replace(/"/g,'""') + '"';
+  };
+  const csv=[headers,...rows].map(row=>row.map(safeCell).join(";")).join("\r\n");
   const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8;"});
-  const url=URL.createObjectURL(blob),link=document.createElement("a");link.href=url;link.download="stokpilot-urunler.csv";link.click();URL.revokeObjectURL(url);
+  const url=URL.createObjectURL(blob),link=document.createElement("a");
+  link.href=url;link.download="stokpilot-urunler.csv";document.body.appendChild(link);link.click();link.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),0);
   showToast("CSV dosyası hazırlandı.");
 });
 $("#mobile-menu").addEventListener("click",()=>$("#sidebar").classList.toggle("open"));
